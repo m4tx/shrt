@@ -3330,9 +3330,9 @@ dependencies = [
 
 [[package]]
 name = "sea-orm"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "97b1218f3b8f95076954bde2e2a33852f873a91e5bbd49402f8fc2bb755c0ed3"
+checksum = "9d5a485429878b8f6eb9ec1c99e91bf4e9055d445be71218faed5847c2e40dba"
 dependencies = [
  "async-stream",
  "async-trait",
@@ -3375,9 +3375,9 @@ dependencies = [
 
 [[package]]
 name = "sea-orm-macros"
-version = "1.0.0-rc.1"
+version = "1.0.0-rc.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7be16d30795cc707c355d1c0ba704db085d5bd507a858509a0d784189b8fe31b"
+checksum = "3f303a2b29c6d92a669652fa7776e6590df7118e05d4f6bf31d48127b06cb21a"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -3407,7 +3407,7 @@ dependencies = [
 [[package]]
 name = "sea-orm-rocket"
 version = "0.5.4"
-source = "git+https://github.com/m4tx/sea-orm.git?branch=fix-okapi-support#183b5edeff0e90e9cf8ccaea73b082dd87b2420a"
+source = "git+https://github.com/SeaQL/sea-orm?tag=1.0.0-rc.3#cdf216ccb155929d54eaad6b1ddd2bfd719e2b1a"
 dependencies = [
  "rocket",
  "rocket_okapi",
@@ -3417,7 +3417,7 @@ dependencies = [
 [[package]]
 name = "sea-orm-rocket-codegen"
 version = "0.5.4"
-source = "git+https://github.com/m4tx/sea-orm.git?branch=fix-okapi-support#183b5edeff0e90e9cf8ccaea73b082dd87b2420a"
+source = "git+https://github.com/SeaQL/sea-orm?tag=1.0.0-rc.3#cdf216ccb155929d54eaad6b1ddd2bfd719e2b1a"
 dependencies = [
  "devise 0.3.1",
  "quote",
@@ -4116,9 +4116,9 @@ checksum = "5ee073c9e4cd00e28217186dbe12796d692868f432bf2e97ee73bed0c56dfa01"
 
 [[package]]
 name = "strum"
-version = "0.25.0"
+version = "0.26.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "290d54ea6f91c969195bdbcd7442c8c2a2ba87da8bf60a7ee86a235d4bc1e125"
+checksum = "5d8cec3501a5194c432b2b7976db6b7d10ec95c253208b45f83f7136aa985e29"
 
 [[package]]
 name = "subtle"

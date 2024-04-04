@@ -20,7 +20,7 @@ opt-level = 'z'
 serde = { version = "1.0.196", features = ["derive"] }
 rocket = "0.5.0"
 rocket_okapi = { version = "0.8.0", features = ["swagger"] }
-sea-orm = { version = "1.0.0-rc.1", features = [ "sqlx-postgres", "sqlx-sqlite", "runtime-tokio-native-tls", "macros", "with-chrono" ] }
-sea-orm-rocket = { git = "https://github.com/m4tx/sea-orm.git", branch = "fix-okapi-support", features = ["rocket_okapi"] }
+sea-orm = { version = "1.0.0-rc.3", features = ["sqlx-postgres", "sqlx-sqlite", "runtime-tokio-native-tls", "macros", "with-chrono"] }
+sea-orm-rocket = { git = "https://github.com/SeaQL/sea-orm", tag = "1.0.0-rc.3", features = ["rocket_okapi"] }
 chrono = { version = "0.4.34", features = ["serde"] }
 schemars = { version = "0.8.16", features = ["chrono"] }
