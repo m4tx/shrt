@@ -1,0 +1,26 @@
+[workspace]
+members = [
+    "shrt-common",
+    "shrt-backend",
+    "shrt-entity",
+    "shrt-frontend",
+    "shrt-migration",
+]
+resolver = "2"
+
+[profile.release]
+panic = 'abort'
+codegen-units = 1
+lto = true
+
+[profile.release.package."shrt-frontend"]
+opt-level = 'z'
+
+[workspace.dependencies]
+serde = { version = "1.0.196", features = ["derive"] }
+rocket = "0.5.0"
+rocket_okapi = { version = "0.8.0", features = ["swagger"] }
+sea-orm = { version = "1.0.0-rc.1", features = [ "sqlx-postgres", "sqlx-sqlite", "runtime-tokio-native-tls", "macros", "with-chrono" ] }
+sea-orm-rocket = { git = "https://github.com/m4tx/sea-orm.git", branch = "fix-okapi-support", features = ["rocket_okapi"] }
+chrono = { version = "0.4.34", features = ["serde"] }
+schemars = { version = "0.8.16", features = ["chrono"] }

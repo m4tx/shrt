@@ -1,0 +1,5 @@
+/target/
+/shrt-frontend/dist/
+*.dockerfile
+docker-compose.yml
+README.md

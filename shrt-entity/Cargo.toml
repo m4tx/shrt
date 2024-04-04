@@ -1,0 +1,19 @@
+[package]
+name = "shrt-entity"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.76"
+
+description = "Link shortener service - database entities"
+categories = ["rendering", "web-programming"]
+authors = ["Mateusz Maćkowski <mateusz@mackowski.org>"]
+keywords = ["riichi", "mahjong", "renderer"]
+readme = "../README.md"
+repository = "https://github.com/m4tx/shrt.git"
+homepage = "https://github.com/m4tx/shrt"
+license = "AGPL-3.0-only"
+
+[dependencies]
+rocket.workspace = true
+rocket_okapi.workspace = true
+sea-orm.workspace = true
