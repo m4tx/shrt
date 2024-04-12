@@ -29,7 +29,6 @@ pub struct Props {
 #[function_component]
 pub fn Input(props: &Props) -> Html {
     let value = use_state(|| props.value.to_string());
-    let placeholder = use_state(|| props.placeholder.to_string());
 
     let debounce = {
         let props = props.clone();

@@ -1,5 +1,5 @@
 #[cfg(feature = "backend")]
-use rocket_okapi::okapi::schemars::{self, JsonSchema};
+use rocket_okapi::okapi::schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]

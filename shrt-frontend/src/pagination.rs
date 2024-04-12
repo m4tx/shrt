@@ -27,7 +27,7 @@ pub fn Pagination(props: &Props) -> Html {
     let on_change = |page: NonZeroU64| {
         let on_set_value = on_set_value.clone();
 
-        Callback::from(move |e: MouseEvent| {
+        Callback::from(move |_: MouseEvent| {
             on_set_value.emit(page);
         })
     };

@@ -7,7 +7,7 @@ use rocket::{
 #[cfg(feature = "backend")]
 use rocket_okapi::okapi::openapi3::Responses;
 #[cfg(feature = "backend")]
-use rocket_okapi::okapi::schemars::{self, Map};
+use rocket_okapi::okapi::schemars::Map;
 #[cfg(feature = "backend")]
 use rocket_okapi::{
     gen::OpenApiGenerator, response::OpenApiResponderInner, JsonSchema, OpenApiError,

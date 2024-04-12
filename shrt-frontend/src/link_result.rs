@@ -15,7 +15,6 @@ pub struct Props {
 #[derive(Clone, Debug, Default)]
 pub enum LinkResultState {
     Success {
-        slug: String,
         url: String,
     },
     Error(ServiceError),
@@ -41,7 +40,6 @@ pub fn LinkResult(props: &Props) -> Html {
                 match ShrtApi::get_link(&slug).await {
                     Ok(link) => {
                         link_result_state.set(LinkResultState::Success {
-                            slug: link.slug,
                             url: link.url,
                         });
                     }
@@ -53,7 +51,6 @@ pub fn LinkResult(props: &Props) -> Html {
         });
     }
 
-    // TODO url encode?
     let shortened_url = format!("https://shrt.rs/{}", urlencoding::encode(slug));
     // TODO replace shrt.rs with an actual config-driven variable
     let target_url_element = match (*link_result_state).clone() {

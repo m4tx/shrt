@@ -11,10 +11,6 @@ use crate::input::Input;
 
 #[derive(Clone, Debug, Default)]
 pub enum UrlShortenerState {
-    Success {
-        slug: String,
-        url: String,
-    },
     Error(ServiceError),
     LinkExists,
     Loading,

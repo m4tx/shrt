@@ -29,11 +29,6 @@ pub enum ListLinksState {
 
 impl ListLinksState {
     #[must_use]
-    fn is_loading(&self) -> bool {
-        matches!(self, ListLinksState::Loading)
-    }
-
-    #[must_use]
     pub fn get_error(&self) -> Option<&ServiceError> {
         match self {
             ListLinksState::Error(e) => Some(e),
@@ -68,8 +63,6 @@ pub fn ListLinks(props: &Props) -> Html {
         });
     }
 
-    let is_loading = list_links_state.is_loading();
-
     let page_num = match &*list_links_state {
         ListLinksState::Success(response) => Some(NonZeroU64::new(response.num_pages).unwrap()),
         _ => None,
@@ -92,7 +85,7 @@ pub fn ListLinks(props: &Props) -> Html {
             }).collect::<Html>()
         }
         ListLinksState::Loading => {
-            (1..=10).map(|i| {
+            (1..=10).map(|_| {
                 html!{
                     <tr class="placeholder-glow">
                         <td><span class={ classes!("placeholder", gen_random_col_class()) }></span></td>
