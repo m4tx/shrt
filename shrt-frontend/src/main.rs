@@ -5,6 +5,7 @@ mod hand_example;
 mod input;
 mod link_result;
 mod list_links;
+mod not_found;
 mod pagination;
 mod remove_link_modal;
 mod select;

@@ -6,6 +6,7 @@ use yew_router::{BrowserRouter, Routable, Switch};
 
 use crate::link_result::LinkResult;
 use crate::list_links::ListLinks;
+use crate::not_found::NotFound;
 use crate::url_shortener::UrlShortener;
 
 #[derive(Clone, Routable, PartialEq)]
@@ -16,6 +17,9 @@ pub enum Route {
     Link { slug: String },
     #[at("/app/links/:page")]
     ListLinks { page: NonZeroU64 },
+    #[at("/404")]
+    #[not_found]
+    NotFound,
 }
 
 fn switch(route: Route) -> Html {
@@ -23,6 +27,7 @@ fn switch(route: Route) -> Html {
         Route::Home => html! { <UrlShortener /> },
         Route::Link { slug } => html! { <LinkResult slug={slug} /> },
         Route::ListLinks { page } => html! { <ListLinks page={page} /> },
+        Route::NotFound => html! { <NotFound /> },
     }
 }
 
@@ -32,7 +37,7 @@ pub fn app() -> Html {
         <BrowserRouter>
             <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
                 <div class="container">
-                    <Link<Route> to={Route::Home} classes={classes!("navbar-brand")}>{ "shrt" }</Link<Route>>
+                    <Link<Route> to={ Route::Home } classes={ classes!("navbar-brand") }>{ "shrt" }</Link<Route>>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
