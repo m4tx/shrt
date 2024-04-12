@@ -39,9 +39,7 @@ pub fn LinkResult(props: &Props) -> Html {
             wasm_bindgen_futures::spawn_local(async move {
                 match ShrtApi::get_link(&slug).await {
                     Ok(link) => {
-                        link_result_state.set(LinkResultState::Success {
-                            url: link.url,
-                        });
+                        link_result_state.set(LinkResultState::Success { url: link.url });
                     }
                     Err(e) => {
                         link_result_state.set(LinkResultState::Error(e));
