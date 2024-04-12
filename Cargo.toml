@@ -8,6 +8,20 @@ members = [
 ]
 resolver = "2"
 
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.76"
+
+categories = ["rendering", "wasm", "web-programming"]
+authors = ["Mateusz Maćkowski <mateusz@mackowski.org>"]
+keywords = ["riichi", "mahjong", "renderer"]
+readme = "README.md"
+repository = "https://github.com/m4tx/shrt.git"
+homepage = "https://github.com/m4tx/shrt"
+license = "AGPL-3.0-only"
+publish = false
+
 [profile.release]
 panic = 'abort'
 codegen-units = 1
@@ -17,10 +31,31 @@ lto = true
 opt-level = 'z'
 
 [workspace.dependencies]
-serde = { version = "1.0.196", features = ["derive"] }
-rocket = "0.5.0"
-rocket_okapi = { version = "0.8.0", features = ["swagger"] }
-sea-orm = { version = "1.0.0-rc.3", features = ["sqlx-postgres", "sqlx-sqlite", "runtime-tokio-native-tls", "macros", "with-chrono"] }
-sea-orm-rocket = { git = "https://github.com/SeaQL/sea-orm", tag = "1.0.0-rc.3", features = ["rocket_okapi"] }
+async-std = "1.12.0"
+async-trait = "0.1.77"
+base64 = "0.22.0"
 chrono = { version = "0.4.34", features = ["serde"] }
+gloo-console = "0.3.0"
+gloo-net = "0.5.0"
+log = "0.4.21"
+nanoid = "0.4.0"
+okapi = "0.7.0"
+rand = "0.8.5"
+rocket = "0.5.0"
+rocket-cache-response = "0.6.4"
+rocket_okapi = { version = "0.8.0", features = ["swagger"] }
 schemars = { version = "0.8.16", features = ["chrono"] }
+sea-orm = "1.0.0-rc.3"
+sea-orm-migration = "1.0.0-rc.3"
+sea-orm-rocket = { git = "https://github.com/SeaQL/sea-orm", tag = "1.0.0-rc.3", features = ["rocket_okapi"] }
+serde = { version = "1.0.196", features = ["derive"] }
+serde-wasm-bindgen = "0.6.5"
+serde_json = "1.0.113"
+time = "0.3.32"
+urlencoding = "2.1.3"
+wasm-bindgen = "0.2.90"
+wasm-bindgen-futures = "0.4.39"
+web-sys = "0.3.67"
+yew = "0.21"
+yew-hooks = "0.3.1"
+yew-router = "0.18.0"

@@ -1,17 +1,18 @@
 [package]
 name = "shrt-entity"
-version = "0.1.0"
-edition = "2021"
-rust-version = "1.76"
-
 description = "Link shortener service - database entities"
-categories = ["rendering", "web-programming"]
-authors = ["Mateusz Maćkowski <mateusz@mackowski.org>"]
-keywords = ["riichi", "mahjong", "renderer"]
-readme = "../README.md"
-repository = "https://github.com/m4tx/shrt.git"
-homepage = "https://github.com/m4tx/shrt"
-license = "AGPL-3.0-only"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+categories.workspace = true
+authors.workspace = true
+keywords.workspace = true
+readme.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+publish.workspace = true
 
 [dependencies]
 rocket.workspace = true

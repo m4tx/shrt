@@ -1,28 +1,29 @@
 [package]
 name = "shrt-common"
-version = "0.1.0"
-edition = "2021"
-rust-version = "1.76"
+description = "Link shortener service - backend/frontend common logic and data structures"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 
-description = "Link shortener service - common library"
-categories = ["rendering", "wasm", "web-programming"]
-authors = ["Mateusz Maćkowski <mateusz@mackowski.org>"]
-keywords = ["riichi", "mahjong", "renderer"]
-readme = "../README.md"
-repository = "https://github.com/m4tx/shrt.git"
-homepage = "https://github.com/m4tx/shrt"
-license = "AGPL-3.0-only"
+categories.workspace = true
+authors.workspace = true
+keywords.workspace = true
+readme.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+publish.workspace = true
 
 [dependencies]
 serde.workspace = true
-rocket = { version = "0.5.0", optional = true }
-rocket_okapi = { version = "0.8.0", optional = true }
+rocket = { workspace = true, optional = true }
+rocket_okapi = { workspace = true, optional = true }
 shrt-entity = { path = "../shrt-entity", optional = true }
 chrono.workspace = true
-schemars.workspace = true
-serde_json = { version = "1.0.115", optional = true }
-gloo-net = { version = "0.5.0", optional = true }
+schemars = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true }
+gloo-net = { workspace = true, optional = true }
 
 [features]
-backend = ["rocket", "rocket_okapi", "shrt-entity", "serde_json"]
+backend = ["schemars", "rocket", "rocket_okapi", "shrt-entity", "serde_json"]
 frontend = ["gloo-net"]
