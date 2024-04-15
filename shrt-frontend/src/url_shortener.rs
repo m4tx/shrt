@@ -1,5 +1,6 @@
 use std::rc::Rc;
 
+use implicit_clone::unsync::IString;
 use shrt_common::errors::ServiceError;
 use yew::prelude::*;
 use yew_router::hooks::use_navigator;
@@ -43,30 +44,30 @@ pub fn UrlShortener() -> Html {
     let url_shortener_state = use_state(UrlShortenerState::default);
     let navigator = use_navigator().unwrap();
 
-    let url = use_state(|| String::from("http://"));
-    let link_name = use_state(String::default);
+    let url = use_state(|| IString::from("http://"));
+    let link_name = use_state(IString::default);
 
-    let on_url_entry: Callback<String> = {
+    let on_url_entry: Callback<IString> = {
         let url = url.clone();
 
-        Callback::from(move |value: String| {
+        Callback::from(move |value: IString| {
             url.set(value.clone());
         })
     };
 
-    let on_link_name_entry: Callback<String> = {
+    let on_link_name_entry: Callback<IString> = {
         let link_name = link_name.clone();
 
-        Callback::from(move |value: String| {
+        Callback::from(move |value: IString| {
             link_name.set(value);
         })
     };
 
-    let on_link_name_debounce: Callback<String> = {
+    let on_link_name_debounce: Callback<IString> = {
         let link_name = link_name.clone();
         let url_shortener_state = url_shortener_state.clone();
 
-        Callback::from(move |value: String| {
+        Callback::from(move |value: IString| {
             let link_name = link_name.clone();
             let url_shortener_state = url_shortener_state.clone();
 

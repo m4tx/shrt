@@ -1,8 +1,9 @@
 use std::num::NonZeroU64;
 
 use rocket::http::Status;
+use rocket::response::status::NoContent;
 use rocket::serde::json::Json;
-use rocket::{get, post};
+use rocket::{delete, get, post};
 use rocket_okapi::openapi;
 use sea_orm::sea_query::Expr;
 use sea_orm::{
@@ -19,6 +20,7 @@ use crate::pool::Db;
 const DEFAULT_LINKS_PER_PAGE: u64 = 30;
 
 type ApiResult<T> = Result<Json<T>, ServiceError>;
+type NoContentApiResult = Result<NoContent, ServiceError>;
 pub type DataResult<'a, T> = Result<Json<T>, rocket::serde::json::Error<'a>>;
 
 #[derive(Debug)]
@@ -46,6 +48,19 @@ impl LinkDb {
             .one(db)
             .await?
             .ok_or(LinkDbError::not_found(slug.to_owned()))
+    }
+
+    pub async fn delete_link_by_slug(db: &DbConn, slug: &str) -> Result<(), LinkDbError> {
+        let result = link::Entity::delete_many()
+            .filter(link::Column::Slug.eq(slug))
+            .exec(db)
+            .await?;
+
+        if result.rows_affected != 1 {
+            Err(LinkDbError::not_found(slug.to_owned()))
+        } else {
+            Ok(())
+        }
     }
 
     pub async fn increment_visits(db: &DbConn, slug: &str) -> Result<(), LinkDbError> {
@@ -122,6 +137,16 @@ pub async fn get_link(conn: Connection<'_, Db>, slug: &str) -> ApiResult<Link> {
     let link = LinkDb::find_link_by_slug(db, slug).await?;
 
     Ok(Json(link.into()))
+}
+
+#[openapi]
+#[delete("/links/<slug>")]
+pub async fn remove_link(conn: Connection<'_, Db>, slug: &str) -> NoContentApiResult {
+    let db = conn.into_inner();
+
+    LinkDb::delete_link_by_slug(db, slug).await?;
+
+    Ok(NoContent)
 }
 
 #[openapi]
@@ -202,6 +227,7 @@ pub async fn redirect_to_link(
     conn: Connection<'_, Db>,
     slug: &str,
 ) -> Result<rocket::response::Redirect, ServiceError> {
+    // TODO transaction
     let db = conn.into_inner();
     let link = LinkDb::find_link_by_slug(db, slug).await?;
 

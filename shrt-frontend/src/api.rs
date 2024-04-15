@@ -75,9 +75,29 @@ impl ShrtApi {
         Self::map_response(result).await
     }
 
+    pub async fn remove_link(slug: &str) -> Result<(), ServiceError> {
+        let result = Request::delete(&format!(
+            "{}/links/{}",
+            api_url(),
+            urlencoding::encode(slug)
+        ))
+        .send()
+        .await?;
+
+        Self::map_response_empty(result).await
+    }
+
     async fn map_response<T: DeserializeOwned>(result: Response) -> Result<T, ServiceError> {
         if result.ok() {
             Ok(result.json().await?)
+        } else {
+            Err(result.json().await?)
+        }
+    }
+
+    async fn map_response_empty(result: Response) -> Result<(), ServiceError> {
+        if result.ok() {
+            Ok(())
         } else {
             Err(result.json().await?)
         }

@@ -1,6 +1,7 @@
 use std::num::NonZeroU64;
 use std::rc::Rc;
 
+use implicit_clone::unsync::IString;
 use rand::seq::SliceRandom;
 use shrt_common::errors::ServiceError;
 use shrt_common::links::LinksResponse;
@@ -43,11 +44,14 @@ pub fn ListLinks(props: &Props) -> Html {
     let navigator = use_navigator().unwrap();
 
     let list_links_state = use_state(ListLinksState::default);
+    let removing_link_slug = use_state(IString::default);
+    let iteration: UseStateHandle<u32> = use_state(|| 0);
+
     {
         let link_result_state = list_links_state.clone();
         let page = *page;
 
-        use_effect_with(page, move |_| {
+        use_effect_with((page, iteration.clone()), move |_| {
             link_result_state.set(ListLinksState::Loading);
 
             wasm_bindgen_futures::spawn_local(async move {
@@ -68,17 +72,33 @@ pub fn ListLinks(props: &Props) -> Html {
         _ => None,
     };
 
+    let on_remove_click = |slug: IString| {
+        let removing_link_slug = removing_link_slug.clone();
+
+        Callback::from(move |_: MouseEvent| {
+            removing_link_slug.set(slug.clone());
+        })
+    };
+
+    let on_remove: Callback<()> = {
+        let iteration = iteration.clone();
+
+        Callback::from(move |_| {
+            iteration.set(*iteration + 1);
+        })
+    };
+
     let rows = match (*list_links_state).clone() {
         ListLinksState::Success(response) => {
             response.links.into_iter().map(|link| {
                 html! {
                     <tr>
-                        <td class="text-truncate" style="max-width: 8rem;"><a href={ format!("https://shrt.rs/{}", urlencoding::encode(&link.slug)) }>{ link.slug }</a></td>
+                        <td class="text-truncate" style="max-width: 8rem;"><a href={ format!("https://shrt.rs/{}", urlencoding::encode(&link.slug)) }>{ link.slug.clone() }</a></td>
                         <td class="text-truncate" style="max-width: 20rem;"><a href={ link.url.clone() }>{ link.url }</a></td>
                         <td>{ link.visits }</td>
                         <td>{ format_date(link.created_at) }</td>
                         <td class="pt-1 pb-1">
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i>{ " Remove" }</button>
+                            <button onclick={ on_remove_click(link.slug.into()) } class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i>{ " Remove" }</button>
                         </td>
                     </tr>
                 }
@@ -132,7 +152,7 @@ pub fn ListLinks(props: &Props) -> Html {
 
                 <Pagination current_page={ *page } page_num={ page_num } on_set_value={ on_page_change } />
 
-                <RemoveLinkModal />
+                <RemoveLinkModal slug={ (*removing_link_slug).clone() } on_remove={ on_remove } />
             }
         </>
     }

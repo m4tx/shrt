@@ -27,6 +27,7 @@ async fn main() -> Result<(), rocket::Error> {
                 api::links::link_exists,
                 api::links::get_links,
                 api::links::create_link,
+                api::links::remove_link,
                 api::links::redirect_to_link
             ],
         )

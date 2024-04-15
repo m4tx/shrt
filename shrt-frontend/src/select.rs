@@ -13,6 +13,7 @@ pub struct Props<T: PartialEq> {
     pub on_set_value: Callback<T>,
 }
 
+// TODO remove?
 #[function_component]
 pub fn Select<T>(props: &Props<T>) -> Html
 where
@@ -34,10 +35,10 @@ where
     };
 
     html! {
-        <select onchange={on_change} class="form-select" aria-label="Tile Set" id={props.id.clone()}>
+        <select onchange={ on_change } class="form-select" aria-label="Tile Set" id={ props.id.clone() }>
             {
                 props.options.iter().map(|option| {
-                    html!{<option value={ option.name() } selected={ *option == T::default() }>{ option.to_string() }</option>}
+                    html!{ <option value={ option.name() } selected={ *option == T::default() }>{ option.to_string() }</option> }
                 }).collect::<Html>()
             }
         </select>

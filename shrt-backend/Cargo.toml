@@ -17,7 +17,7 @@ publish.workspace = true
 [dependencies]
 async-trait.workspace = true
 chrono.workspace = true
-log = { workspace = true, features = ["max_level_trace", "release_max_level_info"] }
+log.workspace = true
 nanoid.workspace = true
 okapi.workspace = true
 rocket-cache-response.workspace = true

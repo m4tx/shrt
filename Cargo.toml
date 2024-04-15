@@ -35,9 +35,11 @@ async-std = "1.12.0"
 async-trait = "0.1.77"
 base64 = "0.22.0"
 chrono = { version = "0.4.34", features = ["serde"] }
+console_log = "1.0.0"
 gloo-console = "0.3.0"
 gloo-net = "0.5.0"
-log = "0.4.21"
+implicit-clone = "0.4.9"
+log = { version = "0.4.21", features = ["max_level_trace", "release_max_level_info"] }
 nanoid = "0.4.0"
 okapi = "0.7.0"
 rand = "0.8.5"

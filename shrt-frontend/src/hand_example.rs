@@ -20,6 +20,6 @@ pub fn HandExample(props: &Props) -> Html {
     };
 
     html! {
-        <button onclick={on_click} type="button" class="btn btn-link p-0"><samp>{ hand.clone() }</samp></button>
+        <button onclick={ on_click } type="button" class="btn btn-link p-0"><samp>{ hand.clone() }</samp></button>
     }
 }

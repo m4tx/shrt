@@ -1,3 +1,4 @@
+use implicit_clone::unsync::IString;
 use wasm_bindgen::JsCast;
 use web_sys::{EventTarget, HtmlInputElement};
 use yew::prelude::*;
@@ -21,14 +22,14 @@ pub struct Props {
     pub disabled: bool,
     #[prop_or_default]
     pub required: bool,
-    pub on_set_value: Callback<String>,
+    pub on_set_value: Callback<IString>,
     #[prop_or_default]
-    pub on_debounce: Callback<String>,
+    pub on_debounce: Callback<IString>,
 }
 
 #[function_component]
 pub fn Input(props: &Props) -> Html {
-    let value = use_state(|| props.value.to_string());
+    let value = use_state(|| props.value.clone());
 
     let debounce = {
         let props = props.clone();
@@ -51,8 +52,9 @@ pub fn Input(props: &Props) -> Html {
             let input = target.and_then(|t| t.dyn_into::<HtmlInputElement>().ok());
 
             if let Some(input) = input {
-                value_debounced.set(input.value());
-                on_set_value.emit(input.value());
+                let value_istring: IString = input.value().into();
+                value_debounced.set(value_istring.clone());
+                on_set_value.emit(value_istring);
                 debounce.run();
             }
         })

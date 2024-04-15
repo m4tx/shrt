@@ -17,15 +17,17 @@ publish.workspace = true
 [dependencies]
 base64.workspace = true
 chrono.workspace = true
-gloo-console.workspace = true
+console_log = { workspace = true, features = ["color"] }
 gloo-net.workspace = true
+implicit-clone.workspace = true
+log.workspace = true
 rand.workspace = true
 serde-wasm-bindgen.workspace = true
 serde.workspace = true
 shrt-common = { path = "../shrt-common", features = ["frontend"] }
 urlencoding.workspace = true
-wasm-bindgen.workspace = true
 wasm-bindgen-futures.workspace = true
+wasm-bindgen.workspace = true
 web-sys = { workspace = true, features = ["console", "HtmlElement", "HtmlButtonElement", "HtmlSelectElement", "MouseEvent", "DomRect"] }
 yew = { workspace = true, features = ["csr"] }
 yew-hooks.workspace = true

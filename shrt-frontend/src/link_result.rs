@@ -54,12 +54,12 @@ pub fn LinkResult(props: &Props) -> Html {
     let target_url_element = match (*link_result_state).clone() {
         LinkResultState::Success { url, .. } => {
             html! {
-                <a href={url.clone()}>{url}</a>
+                <a href={ url.clone() }>{url}</a>
             }
         }
         LinkResultState::Error(e) => {
             html! {
-                <ErrorAlert message={ "Could not retrieve the target URL" } error={Some(Rc::new(e))} />
+                <ErrorAlert message={ "Could not retrieve the target URL" } error={ Some(Rc::new(e)) } />
             }
         }
         LinkResultState::Loading => {
@@ -73,11 +73,11 @@ pub fn LinkResult(props: &Props) -> Html {
         <>
             <div class="mb-3">
                 <p class="h1">{ "Shortened URL:" }</p>
-                <a href={shortened_url.clone()} class="lead">{shortened_url}</a>
+                <a href={ shortened_url.clone() } class="lead">{shortened_url}</a>
             </div>
             <div class="mb-3 text-truncate placeholder-glow">
                 <p class="h2">{ "Target URL:" }</p>
-                {target_url_element}
+                { target_url_element }
             </div>
         </>
     }

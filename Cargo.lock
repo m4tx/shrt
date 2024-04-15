@@ -661,6 +661,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "console_log"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "be8aed40e4edbf4d3b4431ab260b63fdc40f5780a4766824329ea0f1eefe3c0f"
+dependencies = [
+ "log",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
 name = "const-oid"
 version = "0.9.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1816,9 +1827,9 @@ dependencies = [
 
 [[package]]
 name = "implicit-clone"
-version = "0.4.8"
+version = "0.4.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc06a255cbf402a52ae399c05a518c68c569c916ea11423620111df576b9b9bb"
+checksum = "f8a9aa791c7b5a71b636b7a68207fdebf171ddfc593d9c8506ec4cbc527b6a84"
 dependencies = [
  "implicit-clone-derive",
  "indexmap 2.2.2",
@@ -3440,8 +3451,10 @@ version = "0.1.0"
 dependencies = [
  "base64 0.22.0",
  "chrono",
- "gloo-console 0.3.0",
+ "console_log",
  "gloo-net 0.5.0",
+ "implicit-clone",
+ "log",
  "rand",
  "serde",
  "serde-wasm-bindgen 0.6.5",

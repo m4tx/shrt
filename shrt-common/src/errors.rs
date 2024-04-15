@@ -35,10 +35,32 @@ impl OpenApiResponderInner for ServiceError {
 
         let mut responses = Map::new();
         responses.insert(
+            "200".to_string(),
+            RefOr::Object(OpenApiReponse {
+                description: "\
+                **OK**\n\n\
+                The request has succeeded. \
+                "
+                .to_string(),
+                ..Default::default()
+            }),
+        );
+        responses.insert(
+            "204".to_string(),
+            RefOr::Object(OpenApiReponse {
+                description: "\
+                **No Content**\n\n\
+                The request has succeeded and there is no content to return. \
+                "
+                .to_string(),
+                ..Default::default()
+            }),
+        );
+        responses.insert(
             "400".to_string(),
             RefOr::Object(OpenApiReponse {
                 description: "\
-                # [400 Bad Request](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400)\n\
+                **Bad Request**\n\n\
                 The request given is wrongly formatted or data asked could not be fulfilled. \
                 "
                 .to_string(),
@@ -49,8 +71,8 @@ impl OpenApiResponderInner for ServiceError {
             "404".to_string(),
             RefOr::Object(OpenApiReponse {
                 description: "\
-                # [404 Not Found](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404)\n\
-                This response is given when you request a page that does not exists.\
+                **Not Found**\n\n\
+                This response is given when you request an entity or endpoint that does not exists.\
                 "
                 .to_string(),
                 ..Default::default()
@@ -60,9 +82,10 @@ impl OpenApiResponderInner for ServiceError {
             "422".to_string(),
             RefOr::Object(OpenApiReponse {
                 description: "\
-                # [422 Unprocessable Entity](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422)\n\
+                **Unprocessable Entity**\n\n\
                 This response is given when you request body is not correctly formatted. \
-                ".to_string(),
+                "
+                .to_string(),
                 ..Default::default()
             }),
         );
@@ -70,9 +93,10 @@ impl OpenApiResponderInner for ServiceError {
             "500".to_string(),
             RefOr::Object(OpenApiReponse {
                 description: "\
-                # [500 Internal Server Error](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500)\n\
+                **Internal Server Error**\n\n\
                 This response is given when something wend wrong on the server. \
-                ".to_string(),
+                "
+                .to_string(),
                 ..Default::default()
             }),
         );
