@@ -15,13 +15,10 @@ use shrt_common::errors::ServiceError;
 use shrt_common::links::{Link, LinkCreateRequest, LinkExists, LinksResponse};
 use shrt_entity::link;
 
+use crate::api::{ApiResult, DataResult, NoContentApiResult};
 use crate::pool::Db;
 
 const DEFAULT_LINKS_PER_PAGE: u64 = 30;
-
-type ApiResult<T> = Result<Json<T>, ServiceError>;
-type NoContentApiResult = Result<NoContent, ServiceError>;
-pub type DataResult<'a, T> = Result<Json<T>, rocket::serde::json::Error<'a>>;
 
 #[derive(Debug)]
 struct LinkDb;

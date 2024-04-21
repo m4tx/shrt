@@ -3,16 +3,16 @@ use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Deserialize, Serialize)]
 #[serde(crate = "rocket::serde")]
-#[sea_orm(table_name = "link")]
+#[sea_orm(table_name = "user")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
-    // TODO index
-    pub slug: String,
-    pub url: String,
     #[sea_orm(indexed)]
-    pub created_at: DateTimeUtc,
-    pub visits: i32,
+    pub username: String,
+    pub password: String,
+    pub active: bool,
+    pub created: DateTimeUtc,
+    pub last_login: Option<DateTimeUtc>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

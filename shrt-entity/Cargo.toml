@@ -18,3 +18,4 @@ publish.workspace = true
 rocket.workspace = true
 rocket_okapi.workspace = true
 sea-orm.workspace = true
+serde = { version = "1.0.196", features = ["derive"] }

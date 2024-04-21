@@ -99,9 +99,11 @@ pub fn RemoveLinkModal(props: &Props) -> Html {
                 return;
             }
 
+            list_links_state.set(RemoveLinkModalState::Initial);
             if let Some(modal) = (*modal).clone() {
-                list_links_state.set(RemoveLinkModalState::Initial);
                 modal.show();
+            } else {
+                // TODO emit cancel?
             }
         });
     }
@@ -149,8 +151,10 @@ pub fn RemoveLinkModal(props: &Props) -> Html {
                         <button type="button" class={ classes!("btn-close", is_loading.then_some("disabled")) } data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>{ format!("Are you sure you want to remove link with slug `{}`?", slug) }</p>
-                        { error.map(|e| html! { <ErrorAlert message={ "Could not remove the link" } error={ Some(Rc::new(e.clone())) } /> }) }
+                        <p class="text-break">{ "Are you sure you want to remove link with slug "}<span class="font-monospace">{ slug }</span>{"?" }</p>
+                        if let Some(error) = error {
+                            <ErrorAlert message={ "Could not remove the link" } error={ Some(Rc::new(error.clone())) } />
+                        }
                     </div>
                     <div class="modal-footer">
                         <button type="button" class={ classes!("btn", "btn-secondary", is_loading.then_some("disabled")) } data-bs-dismiss="modal">{ "Cancel" }</button>
