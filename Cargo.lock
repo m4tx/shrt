@@ -1821,7 +1821,7 @@ dependencies = [
  "httpdate",
  "itoa",
  "pin-project-lite",
- "socket2 0.5.7",
+ "socket2 0.4.10",
  "tokio",
  "tower-service",
  "tracing",
@@ -3212,7 +3212,7 @@ dependencies = [
 [[package]]
 name = "sea-orm-rocket"
 version = "0.5.4"
-source = "git+https://github.com/SeaQL/sea-orm?tag=1.0.0-rc.3#cdf216ccb155929d54eaad6b1ddd2bfd719e2b1a"
+source = "git+https://github.com/SeaQL/sea-orm?tag=1.0.0-rc.5#987cb38aaf4ebe5554dcce3eba7b88e981563a87"
 dependencies = [
  "rocket",
  "rocket_okapi",
@@ -3222,7 +3222,7 @@ dependencies = [
 [[package]]
 name = "sea-orm-rocket-codegen"
 version = "0.5.4"
-source = "git+https://github.com/SeaQL/sea-orm?tag=1.0.0-rc.3#cdf216ccb155929d54eaad6b1ddd2bfd719e2b1a"
+source = "git+https://github.com/SeaQL/sea-orm?tag=1.0.0-rc.5#987cb38aaf4ebe5554dcce3eba7b88e981563a87"
 dependencies = [
  "devise 0.3.1",
  "quote",
