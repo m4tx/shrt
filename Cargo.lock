@@ -3102,7 +3102,7 @@ dependencies = [
 [[package]]
 name = "sea-orm-rocket"
 version = "0.5.4"
-source = "git+https://github.com/SeaQL/sea-orm?tag=1.1.0#0c5668dcd8648f11dbc8f62a6a782c1fa8551314"
+source = "git+https://github.com/SeaQL/sea-orm?tag=1.1.1#5f1a9d2a46c9b0776c57311782e72dab8e5c6948"
 dependencies = [
  "rocket",
  "rocket_okapi",
@@ -3112,7 +3112,7 @@ dependencies = [
 [[package]]
 name = "sea-orm-rocket-codegen"
 version = "0.5.4"
-source = "git+https://github.com/SeaQL/sea-orm?tag=1.1.0#0c5668dcd8648f11dbc8f62a6a782c1fa8551314"
+source = "git+https://github.com/SeaQL/sea-orm?tag=1.1.1#5f1a9d2a46c9b0776c57311782e72dab8e5c6948"
 dependencies = [
  "devise 0.3.1",
  "quote",
