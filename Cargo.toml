@@ -49,7 +49,7 @@ rocket_okapi = { version = "0.8.0", features = ["swagger"] }
 schemars = { version = "0.8.21", features = ["chrono"] }
 sea-orm = "1.0.1"
 sea-orm-migration = "1.0.1"
-sea-orm-rocket = { git = "https://github.com/SeaQL/sea-orm", tag = "1.1.1", features = ["rocket_okapi"] }
+sea-orm-rocket = { git = "https://github.com/SeaQL/sea-orm", tag = "1.1.3", features = ["rocket_okapi"] }
 serde = { version = "1.0.217", features = ["derive"] }
 serde-wasm-bindgen = "0.6.5"
 serde_json = "1.0.134"
