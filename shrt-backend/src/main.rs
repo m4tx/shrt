@@ -14,7 +14,7 @@ mod logging;
 mod pool;
 
 #[rocket::main]
-async fn main() -> Result<(), rocket::Error> {
+async fn main() -> Result<(), Box<rocket::Error>> {
     init_logging(LevelFilter::Debug).expect("Could not initialize logging");
 
     rocket::build()

@@ -117,7 +117,7 @@ impl From<LinkDbError> for ServiceError {
         match value {
             LinkDbError::NotFound { slug } => ServiceError {
                 error: "Link not found".to_string(),
-                message: Some(format!("Link with slug {} not found", slug)),
+                message: Some(format!("Link with slug {slug} not found")),
                 http_status: Status::NotFound,
             },
             LinkDbError::DbError(db_error) => ServiceError {

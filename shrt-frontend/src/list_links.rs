@@ -161,7 +161,7 @@ pub fn ListLinks(props: &Props) -> Html {
 fn gen_random_col_class() -> String {
     let cols = ["3", "4", "5", "6", "7", "8", "10", "12"];
     let col = cols.choose(&mut rand::thread_rng()).unwrap();
-    format!("col-{}", col)
+    format!("col-{col}")
 }
 
 fn format_date(datetime: chrono::DateTime<chrono::Utc>) -> String {
