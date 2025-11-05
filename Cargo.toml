@@ -38,7 +38,7 @@ chrono = { version = "0.4.42", features = ["serde"] }
 console_log = "1.0.0"
 gloo-console = "0.3.0"
 gloo-net = "0.5.0"
-implicit-clone = "0.4.9"
+implicit-clone = "0.6.0"
 log = { version = "0.4.28", features = ["max_level_trace", "release_max_level_info"] }
 nanoid = "0.4.0"
 okapi = "0.7.0"
