@@ -7,7 +7,9 @@ use crate::enums::EnumName;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "backend", derive(FromFormField))]
+#[derive(Default)]
 pub enum TileSet {
+    #[default]
     Yellow,
     Red,
     Black,
@@ -22,12 +24,6 @@ impl EnumName for TileSet {
             TileSet::Black => "Black",
             TileSet::MartinPersson => "MartinPersson",
         }
-    }
-}
-
-impl Default for TileSet {
-    fn default() -> Self {
-        Self::Yellow
     }
 }
 
