@@ -2,7 +2,7 @@ use std::num::NonZeroU64;
 use std::rc::Rc;
 
 use implicit_clone::unsync::IString;
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use shrt_common::errors::ServiceError;
 use shrt_common::links::LinksResponse;
 use yew::prelude::*;
@@ -160,7 +160,7 @@ pub fn ListLinks(props: &Props) -> Html {
 
 fn gen_random_col_class() -> String {
     let cols = ["3", "4", "5", "6", "7", "8", "10", "12"];
-    let col = cols.choose(&mut rand::thread_rng()).unwrap();
+    let col = cols.choose(&mut rand::rng()).unwrap();
     format!("col-{col}")
 }
 
