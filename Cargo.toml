@@ -33,7 +33,7 @@ opt-level = 'z'
 [workspace.dependencies]
 async-std = "1.13.2"
 async-trait = "0.1.89"
-chrono = { version = "0.4.42", features = ["serde"] }
+chrono = { version = "0.4.43", features = ["serde"] }
 console_log = "1.0.0"
 getrandom = "0.3"
 gloo-console = "0.3.0"
@@ -52,11 +52,11 @@ sea-orm-migration = "1.0.1"
 sea-orm-rocket = { git = "https://github.com/SeaQL/sea-orm", tag = "1.1.3", features = ["rocket_okapi"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde-wasm-bindgen = "0.6.5"
-serde_json = "1.0.148"
-time = "0.3.44"
+serde_json = "1.0.149"
+time = "0.3.46"
 urlencoding = "2.1.3"
 wasm-bindgen = "0.2.97"
-wasm-bindgen-futures = "0.4.47"
+wasm-bindgen-futures = "0.4.58"
 web-sys = "0.3.72"
 yew = "0.22"
 yew-hooks = "0.4"
