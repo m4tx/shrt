@@ -1,13 +1,8 @@
 use std::fmt::{Display, Formatter};
 
-#[cfg(feature = "backend")]
-use rocket::form::FromFormField;
-
 use crate::enums::EnumName;
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-#[cfg_attr(feature = "backend", derive(FromFormField))]
-#[derive(Default)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
 pub enum TileSet {
     #[default]
     Yellow,
