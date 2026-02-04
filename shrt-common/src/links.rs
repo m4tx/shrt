@@ -1,10 +1,7 @@
-#[cfg(feature = "backend")]
-use rocket_okapi::okapi::schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[cfg_attr(feature = "backend", derive(JsonSchema))]
-#[cfg_attr(feature = "backend", serde(crate = "rocket::serde"))]
+#[cfg_attr(feature = "backend", derive(schemars::JsonSchema))]
 pub struct LinksResponse {
     pub page: u64,
     pub links_per_page: u64,
@@ -13,8 +10,7 @@ pub struct LinksResponse {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[cfg_attr(feature = "backend", derive(JsonSchema))]
-#[cfg_attr(feature = "backend", serde(crate = "rocket::serde"))]
+#[cfg_attr(feature = "backend", derive(schemars::JsonSchema))]
 pub struct Link {
     pub slug: String,
     pub url: String,
@@ -23,27 +19,13 @@ pub struct Link {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[cfg_attr(feature = "backend", derive(JsonSchema))]
-#[cfg_attr(feature = "backend", serde(crate = "rocket::serde"))]
+#[cfg_attr(feature = "backend", derive(schemars::JsonSchema))]
 pub struct LinkExists {
     pub exists: bool,
 }
 
-#[cfg(feature = "backend")]
-impl From<shrt_entity::link::Model> for Link {
-    fn from(value: shrt_entity::link::Model) -> Self {
-        Self {
-            slug: value.slug,
-            url: value.url,
-            created_at: value.created_at,
-            visits: value.visits,
-        }
-    }
-}
-
 #[derive(Debug, Serialize, Deserialize)]
-#[cfg_attr(feature = "backend", derive(JsonSchema))]
-#[cfg_attr(feature = "backend", serde(crate = "rocket::serde"))]
+#[cfg_attr(feature = "backend", derive(schemars::JsonSchema))]
 pub struct LinkCreateRequest {
     pub slug: Option<String>,
     pub url: String,
