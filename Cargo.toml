@@ -35,7 +35,7 @@ async-std = "1.13.2"
 async-trait = "0.1.89"
 chrono = { version = "0.4.44", features = ["serde"] }
 console_log = "1.0.0"
-getrandom = "0.3"
+getrandom = "0.4"
 gloo-console = "0.3.0"
 gloo-net = "0.6.0"
 implicit-clone = "0.6"
