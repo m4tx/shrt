@@ -42,7 +42,7 @@ implicit-clone = "0.6"
 log = { version = "0.4.29", features = ["max_level_trace", "release_max_level_info"] }
 nanoid = "0.4.0"
 okapi = "0.7.0"
-rand = "0.9"
+rand = "0.10"
 rocket = "0.5.0"
 rocket-cache-response = "0.6.4"
 rocket_okapi = { version = "0.8.0", features = ["swagger"] }
