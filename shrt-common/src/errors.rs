@@ -88,6 +88,8 @@ impl From<gloo_net::Error> for ServiceError {
         Self {
             error: "Request Error".to_owned(),
             message: Some(err.to_string()),
+            #[cfg(feature = "backend")]
+            status: cot::StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }

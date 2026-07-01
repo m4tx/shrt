@@ -24,6 +24,7 @@ impl App for LinkApp {
 
     fn router(&self) -> Router {
         use api::*;
+        use cot::openapi::NoApi;
         use cot::router::method::openapi::ApiMethodRouter;
 
         Router::with_urls([
@@ -33,11 +34,13 @@ impl App for LinkApp {
             ),
             Route::with_api_handler(
                 "/links/{slug}/go",
-                ApiMethodRouter::new().get(redirect_to_link),
+                ApiMethodRouter::new().get(NoApi(redirect_to_link)),
             ),
             Route::with_api_handler(
                 "/links/{slug}",
-                ApiMethodRouter::new().get(get_link).delete(remove_link),
+                ApiMethodRouter::new()
+                    .get(get_link)
+                    .delete(NoApi(remove_link)),
             ),
             Route::with_api_handler(
                 "/links",

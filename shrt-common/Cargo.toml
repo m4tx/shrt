@@ -16,7 +16,7 @@ publish.workspace = true
 
 [dependencies]
 serde.workspace = true
-cot = { path = "../../cot/cot", optional = true }
+cot = { workspace = true, optional = true }
 chrono.workspace = true
 schemars = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }

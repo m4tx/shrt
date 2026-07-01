@@ -1,19 +1,12 @@
-use cot::db::migrations::MigrationEngine;
-use cot::test::Client;
-use cot::{App, StatusCode};
-use shrt_backend::{LinkApp, ShrtProject};
-use shrt_common::links::{Link, LinkCreateRequest};
+use cot::test::TestServerBuilder;
+use shrt_backend::ShrtProject;
+use shrt_common::links::{Link, LinkCreateRequest, LinkExists};
 
-#[cot::test]
-async fn test_create_and_get_link() {
-    let project = ShrtProject;
-    let mut client = Client::new(project).await;
-
-    // Run migrations
-    let db = client.context().try_database().unwrap();
-    let app = LinkApp;
-    let engine = MigrationEngine::new(app.migrations()).unwrap();
-    engine.run(db).await.unwrap();
+#[cot::e2e_test]
+async fn test_create_and_get_link() -> cot::Result<()> {
+    let server = TestServerBuilder::new(ShrtProject).start().await;
+    let url = server.url();
+    let client = reqwest::Client::new();
 
     // Create link
     let create_request = LinkCreateRequest {
@@ -22,65 +15,45 @@ async fn test_create_and_get_link() {
     };
 
     let response = client
-        .request(
-            cot::http::Request::post("/links")
-                .header("Content-Type", "application/json")
-                .body(cot::Body::from(
-                    serde_json::to_string(&create_request).unwrap(),
-                ))
-                .unwrap(),
-        )
+        .post(format!("{url}/links"))
+        .json(&create_request)
+        .send()
         .await
         .expect("Request failed");
 
-    assert_eq!(response.status(), StatusCode::OK);
-    let body = response
-        .into_body()
-        .into_bytes()
-        .await
-        .expect("Failed to read body");
-    let link: Link = serde_json::from_slice(&body).expect("Failed to deserialize link");
+    assert_eq!(response.status(), reqwest::StatusCode::OK);
+    let link: Link = response.json().await.expect("Failed to deserialize link");
     assert_eq!(link.slug, "test-slug");
     assert_eq!(link.url, "https://example.com");
 
     // Get link
     let response = client
-        .get("/links/test-slug")
+        .get(format!("{url}/links/test-slug"))
+        .send()
         .await
         .expect("Request failed");
-    assert_eq!(response.status(), StatusCode::OK);
-    let body = response
-        .into_body()
-        .into_bytes()
-        .await
-        .expect("Failed to read body");
-    let link: Link = serde_json::from_slice(&body).expect("Failed to deserialize link");
+    assert_eq!(response.status(), reqwest::StatusCode::OK);
+    let link: Link = response.json().await.expect("Failed to deserialize link");
     assert_eq!(link.slug, "test-slug");
+
+    server.close().await;
+    Ok(())
 }
 
-#[cot::test]
-async fn test_link_exists() {
-    let project = ShrtProject;
-    let mut client = Client::new(project).await;
-
-    // Run migrations
-    let db = client.context().try_database().unwrap();
-    let app = LinkApp;
-    let engine = MigrationEngine::new(app.migrations()).unwrap();
-    engine.run(db).await.unwrap();
+#[cot::e2e_test]
+async fn test_link_exists() -> cot::Result<()> {
+    let server = TestServerBuilder::new(ShrtProject).start().await;
+    let url = server.url();
+    let client = reqwest::Client::new();
 
     // Initially doesn't exist
     let response = client
-        .get("/links/missing/exists")
+        .get(format!("{url}/links/missing/exists"))
+        .send()
         .await
         .expect("Request failed");
-    assert_eq!(response.status(), StatusCode::OK);
-    let body = response
-        .into_body()
-        .into_bytes()
-        .await
-        .expect("Failed to read body");
-    let exists: shrt_common::links::LinkExists = serde_json::from_slice(&body).unwrap();
+    assert_eq!(response.status(), reqwest::StatusCode::OK);
+    let exists: LinkExists = response.json().await.unwrap();
     assert!(!exists.exists);
 
     // Create link
@@ -89,28 +62,22 @@ async fn test_link_exists() {
         url: "https://example.com".to_string(),
     };
     client
-        .request(
-            cot::http::Request::post("/links")
-                .header("Content-Type", "application/json")
-                .body(cot::Body::from(
-                    serde_json::to_string(&create_request).unwrap(),
-                ))
-                .unwrap(),
-        )
+        .post(format!("{url}/links"))
+        .json(&create_request)
+        .send()
         .await
         .unwrap();
 
     // Now exists
     let response = client
-        .get("/links/existing/exists")
+        .get(format!("{url}/links/existing/exists"))
+        .send()
         .await
         .expect("Request failed");
-    assert_eq!(response.status(), StatusCode::OK);
-    let body = response
-        .into_body()
-        .into_bytes()
-        .await
-        .expect("Failed to read body");
-    let exists: shrt_common::links::LinkExists = serde_json::from_slice(&body).unwrap();
+    assert_eq!(response.status(), reqwest::StatusCode::OK);
+    let exists: LinkExists = response.json().await.unwrap();
     assert!(exists.exists);
+
+    server.close().await;
+    Ok(())
 }

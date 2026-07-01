@@ -219,25 +219,15 @@ pub async fn redirect_to_link(
             )
         })?;
 
-    if let Some(link) = link {
-        use cot::db::query::ExprAdd;
-
-        let _result: StatementResult = query!(Link, $slug == slug)
-            .update(
-                &db,
-                vec![(
-                    <Link as Model>::Fields::visits.identifier(),
-                    <Link as Model>::Fields::visits.add(1),
-                )],
+    if let Some(mut link) = link {
+        link.visits += 1;
+        link.update(&db).await.map_err(|e| {
+            error(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Database error",
+                &e.to_string(),
             )
-            .await
-            .map_err(|e| {
-                error(
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    "Database error",
-                    &e.to_string(),
-                )
-            })?;
+        })?;
 
         Ok(Redirect::new(link.url))
     } else {

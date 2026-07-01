@@ -16,7 +16,7 @@ publish.workspace = true
 
 [dependencies]
 chrono = { workspace = true }
-cot = { path = "../../cot/cot", features = ["full", "postgres", "sqlite", "openapi", "swagger-ui"] } # Enable db backends and OpenAPI
+cot = { workspace = true, features = ["full", "postgres", "sqlite", "openapi", "swagger-ui"] } # Enable db backends and OpenAPI
 log = { workspace = true }
 nanoid = { workspace = true }
 schemars = { workspace = true }
@@ -24,3 +24,6 @@ serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 shrt-common = { path = "../shrt-common", features = ["backend"] }
 tokio = { version = "1", features = ["full"] }
+
+[dev-dependencies]
+reqwest = { version = "0.12", features = ["json"] }
