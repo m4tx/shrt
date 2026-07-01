@@ -20,6 +20,7 @@ cot = { path = "../../cot/cot", optional = true }
 chrono.workspace = true
 schemars = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
+indexmap = "2"
 gloo-net = { workspace = true, optional = true }
 
 [features]

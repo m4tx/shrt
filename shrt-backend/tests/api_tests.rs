@@ -1,6 +1,6 @@
 use cot::db::migrations::MigrationEngine;
 use cot::test::Client;
-use cot::{App, Project, StatusCode};
+use cot::{App, StatusCode};
 use shrt_backend::{LinkApp, ShrtProject};
 use shrt_common::links::{Link, LinkCreateRequest};
 

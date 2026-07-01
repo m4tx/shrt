@@ -1,6 +1,7 @@
 use cot::cli::CliMetadata;
 use cot::config::ProjectConfig;
 use cot::db::migrations::SyncDynMigration;
+use cot::openapi::swagger_ui::SwaggerUi;
 use cot::project::{MiddlewareContext, RegisterAppsContext, RootHandler, RootHandlerBuilder};
 use cot::router::{Route, Router};
 use cot::static_files::StaticFilesMiddleware;
@@ -23,13 +24,25 @@ impl App for LinkApp {
 
     fn router(&self) -> Router {
         use api::*;
-        use cot::router::method::get;
+        use cot::router::method::openapi::ApiMethodRouter;
 
         Router::with_urls([
-            Route::with_handler("/links/{slug}/exists", get(link_exists)),
-            Route::with_handler("/links/{slug}/go", get(redirect_to_link)),
-            Route::with_handler("/links/{slug}", get(get_link).delete(remove_link)),
-            Route::with_handler("/links", get(get_links).post(create_link)),
+            Route::with_api_handler(
+                "/links/{slug}/exists",
+                ApiMethodRouter::new().get(link_exists),
+            ),
+            Route::with_api_handler(
+                "/links/{slug}/go",
+                ApiMethodRouter::new().get(redirect_to_link),
+            ),
+            Route::with_api_handler(
+                "/links/{slug}",
+                ApiMethodRouter::new().get(get_link).delete(remove_link),
+            ),
+            Route::with_api_handler(
+                "/links",
+                ApiMethodRouter::new().get(get_links).post(create_link),
+            ),
         ])
     }
 }
@@ -62,6 +75,7 @@ impl Project for ShrtProject {
     }
 
     fn register_apps(&self, apps: &mut AppBuilder, _context: &RegisterAppsContext) {
+        apps.register_with_views(SwaggerUi::new(), "/swagger");
         apps.register_with_views(LinkApp, "");
     }
 }

@@ -16,7 +16,7 @@ publish.workspace = true
 
 [dependencies]
 chrono = { workspace = true }
-cot = { path = "../../cot/cot", features = ["full", "postgres", "sqlite"] } # Enable db backends
+cot = { path = "../../cot/cot", features = ["full", "postgres", "sqlite", "openapi", "swagger-ui"] } # Enable db backends and OpenAPI
 log = { workspace = true }
 nanoid = { workspace = true }
 schemars = { workspace = true }

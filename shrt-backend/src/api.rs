@@ -1,12 +1,12 @@
 use chrono::Utc;
-use cot::db::query::{ExprEq, Query};
-use cot::db::{Database, Model};
+use cot::db::{query, Database, Model, StatementResult};
 use cot::json::Json;
 use cot::request::extractors::{Path, UrlQuery};
-use cot::response::{IntoResponse, Response, ResponseExt};
-use cot::{Body, StatusCode};
+use cot::response::Redirect;
+use cot::StatusCode;
 use nanoid::nanoid;
-use shrt_common::links::{LinkCreateRequest, LinkExists, LinksResponse};
+use shrt_common::errors::ServiceError;
+use shrt_common::links::{Link as ApiLink, LinkCreateRequest, LinkExists, LinksResponse};
 
 use crate::models::Link;
 
@@ -21,8 +21,8 @@ const ALPHABET: [char; 56] = [
 ];
 
 // Helper to convert DB Link to API Link
-fn to_api_link(link: &Link) -> shrt_common::links::Link {
-    shrt_common::links::Link {
+fn to_api_link(link: &Link) -> ApiLink {
+    ApiLink {
         slug: link.slug.clone(),
         url: link.url.clone(),
         created_at: link.created_at,
@@ -30,62 +30,81 @@ fn to_api_link(link: &Link) -> shrt_common::links::Link {
     }
 }
 
-fn error_response(status: StatusCode, error: &str, message: &str) -> cot::Result<Response> {
-    let json = serde_json::json!({
-        "error": error,
-        "message": message
-    });
-
-    Ok(Response::builder()
-        .status(status)
-        .header("Content-Type", "application/json")
-        .body(Body::from(json.to_string()))
-        .unwrap())
+fn error(status: StatusCode, error: &str, message: &str) -> ServiceError {
+    ServiceError {
+        status,
+        error: error.to_string(),
+        message: Some(message.to_string()),
+    }
 }
 
-pub async fn get_link(db: Database, Path(slug): Path<String>) -> cot::Result<Response> {
-    let mut query = Query::<Link>::new();
-    query.filter(<Link as Model>::Fields::slug.eq(slug.clone()));
-    let link = query.get(&db).await?;
+pub async fn get_link(
+    db: Database,
+    Path(slug): Path<String>,
+) -> Result<Json<ApiLink>, ServiceError> {
+    let link: Option<Link> = query!(Link, $slug == slug.clone())
+        .get(&db)
+        .await
+        .map_err(|e| {
+            error(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Database error",
+                &e.to_string(),
+            )
+        })?;
 
     match link {
-        Some(link) => Ok(Json(to_api_link(&link)).into_response()?),
-        None => error_response(
+        Some(link) => Ok(Json(to_api_link(&link))),
+        None => Err(error(
             StatusCode::NOT_FOUND,
             "Link not found",
             &format!("Link with slug {} not found", slug),
-        ),
+        )),
     }
 }
 
-pub async fn remove_link(db: Database, Path(slug): Path<String>) -> cot::Result<Response> {
-    let mut query = Query::<Link>::new();
-    query.filter(<Link as Model>::Fields::slug.eq(slug.clone()));
-    let result = query.delete(&db).await?;
+pub async fn remove_link(
+    db: Database,
+    Path(slug): Path<String>,
+) -> Result<StatusCode, ServiceError> {
+    let result: StatementResult = query!(Link, $slug == slug.clone())
+        .delete(&db)
+        .await
+        .map_err(|e| {
+            error(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Database error",
+                &e.to_string(),
+            )
+        })?;
 
     if result.rows_affected().0 == 1 {
-        Ok(Response::builder()
-            .status(StatusCode::NO_CONTENT)
-            .body(Body::empty())
-            .unwrap())
+        Ok(StatusCode::NO_CONTENT)
     } else {
-        error_response(
+        Err(error(
             StatusCode::NOT_FOUND,
             "Link not found",
             &format!("Link with slug {} not found", slug),
-        )
+        ))
     }
 }
 
-pub async fn link_exists(db: Database, Path(slug): Path<String>) -> cot::Result<Response> {
-    let mut query = Query::<Link>::new();
-    query.filter(<Link as Model>::Fields::slug.eq(slug));
-    let exists = query.exists(&db).await?;
+pub async fn link_exists(
+    db: Database,
+    Path(slug): Path<String>,
+) -> Result<Json<LinkExists>, ServiceError> {
+    let exists: bool = query!(Link, $slug == slug).exists(&db).await.map_err(|e| {
+        error(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "Database error",
+            &e.to_string(),
+        )
+    })?;
 
-    Ok(Json(LinkExists { exists }).into_response()?)
+    Ok(Json(LinkExists { exists }))
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, cot::schemars::JsonSchema)]
 pub struct PaginationParams {
     page: Option<u64>,
     links_per_page: Option<u64>,
@@ -94,7 +113,7 @@ pub struct PaginationParams {
 pub async fn get_links(
     db: Database,
     UrlQuery(params): UrlQuery<PaginationParams>,
-) -> cot::Result<Response> {
+) -> Result<Json<LinksResponse>, ServiceError> {
     let page = params.page.unwrap_or(1).max(1);
     let links_per_page = params
         .links_per_page
@@ -102,41 +121,62 @@ pub async fn get_links(
         .max(1);
     let offset = (page - 1) * links_per_page;
 
-    let total_query = Query::<Link>::new();
-    let total_count = total_query.count(&db).await?;
+    let total_count = Link::objects().count(&db).await.map_err(|e| {
+        error(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "Database error",
+            &e.to_string(),
+        )
+    })?;
     let num_pages = (total_count + links_per_page - 1) / links_per_page;
 
-    let mut query = Query::<Link>::new();
-    query.limit(links_per_page).offset(offset);
-
-    let links = query.all(&db).await?;
+    let links = Link::objects()
+        .limit(links_per_page)
+        .offset(offset)
+        .all(&db)
+        .await
+        .map_err(|e| {
+            error(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Database error",
+                &e.to_string(),
+            )
+        })?;
 
     Ok(Json(LinksResponse {
         page,
         links_per_page,
         num_pages,
         links: links.iter().map(to_api_link).collect(),
-    })
-    .into_response()?)
+    }))
 }
 
 pub async fn create_link(
     db: Database,
     Json(payload): Json<LinkCreateRequest>,
-) -> cot::Result<Response> {
+) -> Result<Json<ApiLink>, ServiceError> {
     let slug = payload
         .slug
+        .clone()
         .unwrap_or_else(|| nanoid!(DEFAULT_SLUG_LENGTH, &ALPHABET));
 
     // Check if slug exists
-    let mut exists_query = Query::<Link>::new();
-    exists_query.filter(<Link as Model>::Fields::slug.eq(slug.clone()));
-    if exists_query.exists(&db).await? {
-        return error_response(
+    let exists: bool = query!(Link, $slug == slug.clone())
+        .exists(&db)
+        .await
+        .map_err(|e| {
+            error(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Database error",
+                &e.to_string(),
+            )
+        })?;
+    if exists {
+        return Err(error(
             StatusCode::BAD_REQUEST,
             "Slug already exists",
             &format!("Slug {} already exists", slug),
-        );
+        ));
     }
 
     let mut link = Link {
@@ -150,35 +190,61 @@ pub async fn create_link(
     // Use insert to catch potential race condition if check above passed but
     // another request inserted same slug
     match link.insert(&db).await {
-        Ok(_) => Ok(Json(to_api_link(&link)).into_response()?),
-        Err(cot::db::DatabaseError::UniqueViolation) => error_response(
+        Ok(_) => Ok(Json(to_api_link(&link))),
+        Err(cot::db::DatabaseError::UniqueViolation) => Err(error(
             StatusCode::BAD_REQUEST,
             "Slug already exists",
             &format!("Slug {} already exists", slug),
-        ),
-        Err(e) => Err(e.into()),
+        )),
+        Err(e) => Err(error(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "Database error",
+            &e.to_string(),
+        )),
     }
 }
 
-pub async fn redirect_to_link(db: Database, Path(slug): Path<String>) -> cot::Result<Response> {
-    let mut query = Query::<Link>::new();
-    query.filter(<Link as Model>::Fields::slug.eq(slug.clone()));
-    let link = query.get(&db).await?;
+pub async fn redirect_to_link(
+    db: Database,
+    Path(slug): Path<String>,
+) -> Result<Redirect, ServiceError> {
+    let link: Option<Link> = query!(Link, $slug == slug.clone())
+        .get(&db)
+        .await
+        .map_err(|e| {
+            error(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Database error",
+                &e.to_string(),
+            )
+        })?;
 
-    if let Some(mut link) = link {
-        link.visits += 1;
-        link.save(&db).await?;
+    if let Some(link) = link {
+        use cot::db::query::ExprAdd;
 
-        Ok(Response::builder()
-            .status(StatusCode::FOUND)
-            .header("Location", link.url)
-            .body(Body::empty())
-            .unwrap())
+        let _result: StatementResult = query!(Link, $slug == slug)
+            .update(
+                &db,
+                vec![(
+                    <Link as Model>::Fields::visits.identifier(),
+                    <Link as Model>::Fields::visits.add(1),
+                )],
+            )
+            .await
+            .map_err(|e| {
+                error(
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Database error",
+                    &e.to_string(),
+                )
+            })?;
+
+        Ok(Redirect::new(link.url))
     } else {
-        error_response(
+        Err(error(
             StatusCode::NOT_FOUND,
             "Link not found",
             &format!("Link with slug {} not found", slug),
-        )
+        ))
     }
 }
