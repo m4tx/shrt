@@ -33,7 +33,7 @@ async-std = "1.13"
 async-trait = "0.1"
 chrono = { version = "0.4.45", features = ["serde"] }
 console_log = "1.0.0"
-cot = { version = "0.6", default-features = false }
+cot = { git = "https://github.com/cot-rs/cot.git", rev = "b06e781865a9a67328a8b088a46f9e1ae555f386", default-features = false }
 getrandom = "0.3"
 gloo-net = "0.7.0"
 implicit-clone = "0.6"
