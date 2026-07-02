@@ -1,6 +1,9 @@
+use cot::admin::AdminApp;
+use cot::auth::db::DatabaseUserApp;
 use cot::cli::CliMetadata;
 use cot::config::ProjectConfig;
 use cot::db::migrations::SyncDynMigration;
+use cot::middleware::{AuthMiddleware, SessionMiddleware};
 use cot::openapi::swagger_ui::SwaggerUi;
 use cot::project::{MiddlewareContext, RegisterAppsContext, RootHandler, RootHandlerBuilder};
 use cot::router::{Route, Router};
@@ -74,10 +77,14 @@ impl Project for ShrtProject {
     fn middlewares(&self, handler: RootHandlerBuilder, context: &MiddlewareContext) -> RootHandler {
         handler
             .middleware(StaticFilesMiddleware::from_context(context))
+            .middleware(AuthMiddleware::new())
+            .middleware(SessionMiddleware::from_context(context))
             .build()
     }
 
     fn register_apps(&self, apps: &mut AppBuilder, _context: &RegisterAppsContext) {
+        apps.register(DatabaseUserApp::new());
+        apps.register_with_views(AdminApp::new(), "/admin");
         apps.register_with_views(SwaggerUi::new(), "/swagger");
         apps.register_with_views(LinkApp, "");
     }
