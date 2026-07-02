@@ -128,7 +128,7 @@ pub async fn get_links(
             &e.to_string(),
         )
     })?;
-    let num_pages = (total_count + links_per_page - 1) / links_per_page;
+    let num_pages = total_count.div_ceil(links_per_page);
 
     let links = Link::objects()
         .limit(links_per_page)
