@@ -60,7 +60,7 @@ pub fn Input(
             required: required,
         }
         if has_error {
-            div { class: "invalid-feedback", "{error}" }
+            div { class: "invalid-feedback", {error} }
         }
     }
 }

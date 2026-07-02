@@ -39,13 +39,13 @@ pub fn LinkResult(slug: String) -> Element {
     rsx! {
         div { class: "mb-3",
             p { class: "h1", "Shortened URL:" }
-            a { href: shortened_url.clone(), class: "lead", "{shortened_url}" }
+            a { href: shortened_url.clone(), class: "lead", {shortened_url.clone()} }
         }
         div { class: "mb-3 text-truncate placeholder-glow",
             p { class: "h2", "Target URL:" }
             match state.read().clone() {
                 LinkResultState::Success { url } => rsx! {
-                    a { href: url.clone(), "{url}" }
+                    a { href: url.clone(), {url.clone()} }
                 },
                 LinkResultState::Error(e) => rsx! {
                     ErrorAlert {

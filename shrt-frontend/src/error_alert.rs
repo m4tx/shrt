@@ -29,7 +29,7 @@ pub fn ErrorAlert(
     rsx! {
         div { class: "alert alert-danger d-flex align-items-center", role: "alert",
             i { class: "bi bi-exclamation-triangle-fill flex-shrink-0 me-2" }
-            div { "{displayed_message}" }
+            div { {displayed_message} }
         }
     }
 }

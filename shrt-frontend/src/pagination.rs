@@ -14,6 +14,13 @@ pub fn Pagination(
 
     let previous_disabled = current_page.get() == 1;
     let next_disabled = current_page.get() == page_num.get();
+    let next_class = if is_loading {
+        "page-link placeholder"
+    } else if next_disabled {
+        "page-link disabled"
+    } else {
+        "page-link"
+    };
 
     let page_buttons: Vec<Element> = pages
         .into_iter()
@@ -67,11 +74,7 @@ pub fn Pagination(
                                 on_set_value.call(current_page.saturating_add(1));
                             }
                         },
-                        class: if next_disabled || is_loading {
-                            if is_loading { "page-link placeholder" } else { "page-link disabled" }
-                        } else {
-                            "page-link"
-                        },
+                        class: next_class,
                         "aria-label": "Next",
                         span { "aria-hidden": "true", "»" }
                     }
