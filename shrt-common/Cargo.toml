@@ -15,15 +15,14 @@ license.workspace = true
 publish.workspace = true
 
 [dependencies]
-serde.workspace = true
-rocket = { workspace = true, optional = true }
-rocket_okapi = { workspace = true, optional = true }
-shrt-entity = { path = "../shrt-entity", optional = true }
 chrono.workspace = true
-schemars = { workspace = true, optional = true }
-serde_json = { workspace = true, optional = true }
+cot = { workspace = true, optional = true }
 gloo-net = { workspace = true, optional = true }
+indexmap.workspace = true
+schemars = { workspace = true, optional = true }
+serde.workspace = true
+serde_json = { workspace = true, optional = true }
 
 [features]
-backend = ["schemars", "rocket", "rocket_okapi", "shrt-entity", "serde_json"]
+backend = ["schemars", "cot", "serde_json"]
 frontend = ["gloo-net"]

@@ -32,7 +32,7 @@ The target binary will be put at `target/release/shrt-backend`.
 
 ### Frontend
 
-Frontend uses the [yew](https://yew.rs/docs/getting-started/build-a-sample-app) framework. The code is compiled into a WebAssembly binary and then statically served.
+Frontend uses the [Dioxus](https://dioxuslabs.com/) framework. The code is compiled into a WebAssembly binary and then statically served.
 
 First, install the [Trunk](https://trunkrs.dev/) bundler and add wasm32 target support to your Rust toolchain.
 
@@ -56,7 +56,7 @@ To build a distributable version of the frontend, execute:
 trunk build --release
 ```
 
-This will build a website in `frontend/dist/` directory that can be statically served by a server such as nginx. You can override th backend URL by providing it as the `SHRT_API_URL` environment variable, like so:
+This will build a website in `shrt-frontend/dist/` directory that can be statically served by a server such as nginx. You can override the backend URL by providing it as the `SHRT_API_URL` environment variable, like so:
 
 ```sh
 export SHRT_API_URL=http://api.shrt.example.com

@@ -1,84 +1,62 @@
-use std::rc::Rc;
-
+use dioxus::prelude::*;
 use shrt_common::errors::ServiceError;
-use yew::prelude::*;
 
 use crate::api::ShrtApi;
 use crate::error_alert::ErrorAlert;
 
-#[derive(Clone, PartialEq, Properties)]
-pub struct Props {
-    #[prop_or_default]
-    pub slug: AttrValue,
-}
-
-#[derive(Clone, Debug, Default)]
-pub enum LinkResultState {
-    Success {
-        url: String,
-    },
+#[derive(Clone, Debug)]
+enum LinkResultState {
+    Success { url: String },
     Error(ServiceError),
-    #[default]
     Loading,
 }
 
-#[function_component]
-pub fn LinkResult(props: &Props) -> Html {
-    let Props { slug } = props;
+#[component]
+pub fn LinkResult(slug: String) -> Element {
+    let mut state: Signal<LinkResultState> = use_signal(|| LinkResultState::Loading);
+    let mut slug_signal = use_signal(|| slug.clone());
 
-    let link_result_state = use_state(LinkResultState::default);
-    {
-        let link_result_state = link_result_state.clone();
-        let slug = slug.clone();
-
-        use_effect_with(slug.clone(), move |_| {
-            if slug.is_empty() {
-                return;
-            }
-
-            wasm_bindgen_futures::spawn_local(async move {
-                match ShrtApi::get_link(&slug).await {
-                    Ok(link) => {
-                        link_result_state.set(LinkResultState::Success { url: link.url });
-                    }
-                    Err(e) => {
-                        link_result_state.set(LinkResultState::Error(e));
-                    }
-                }
-            });
-        });
+    if *slug_signal.peek() != slug {
+        slug_signal.set(slug.clone());
     }
 
-    let shortened_url = format!("https://shrt.rs/{}", urlencoding::encode(slug));
-    // TODO replace shrt.rs with an actual config-driven variable
-    let target_url_element = match (*link_result_state).clone() {
-        LinkResultState::Success { url, .. } => {
-            html! {
-                <a href={ url.clone() }>{url}</a>
-            }
+    use_effect(move || {
+        let s = slug_signal();
+        if s.is_empty() {
+            return;
         }
-        LinkResultState::Error(e) => {
-            html! {
-                <ErrorAlert message={ "Could not retrieve the target URL" } error={ Some(Rc::new(e)) } />
+        state.set(LinkResultState::Loading);
+        spawn(async move {
+            match ShrtApi::get_link(&s).await {
+                Ok(link) => state.set(LinkResultState::Success { url: link.url }),
+                Err(e) => state.set(LinkResultState::Error(e)),
             }
-        }
-        LinkResultState::Loading => {
-            html! {
-                <span class="placeholder col-8"></span>
-            }
-        }
-    };
+        });
+    });
 
-    html! {
-        <>
-            <div class="mb-3">
-                <p class="h1">{ "Shortened URL:" }</p>
-                <a href={ shortened_url.clone() } class="lead">{shortened_url}</a>
-            </div>
-            <div class="mb-3 text-truncate placeholder-glow">
-                <p class="h2">{ "Target URL:" }</p>
-                { target_url_element }
-            </div>
-        </>
+    let shortened_url = format!("https://snip.rs/{}", urlencoding::encode(&slug));
+
+    rsx! {
+        div { class: "mb-3",
+            p { class: "h1", "Shortened URL:" }
+            a { href: shortened_url.clone(), class: "lead", {shortened_url.clone()} }
+        }
+        div { class: "mb-3 text-truncate placeholder-glow",
+            p { class: "h2", "Target URL:" }
+            match state.read().clone() {
+                LinkResultState::Success { url } => rsx! {
+                    a { href: url.clone(), {url.clone()} }
+                },
+                LinkResultState::Error(e) => rsx! {
+                    ErrorAlert {
+                        message: "Could not retrieve the target URL",
+                        error: Some(e),
+                    }
+                },
+                LinkResultState::Loading => rsx! {
+                    span { class: "placeholder col-8" }
+                },
+            }
+        }
     }
 }

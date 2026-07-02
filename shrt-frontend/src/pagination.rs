@@ -1,78 +1,92 @@
 use std::num::NonZeroU64;
 
-use yew::prelude::*;
+use dioxus::prelude::*;
 
-#[derive(Clone, PartialEq, Properties)]
-pub struct Props {
-    #[prop_or(NonZeroU64::new(1).unwrap())]
-    pub current_page: NonZeroU64,
-    #[prop_or_default]
-    pub page_num: Option<NonZeroU64>,
-    pub on_set_value: Callback<NonZeroU64>,
+#[component]
+pub fn Pagination(
+    #[props(default = NonZeroU64::MIN)] current_page: NonZeroU64,
+    #[props(default)] page_num: Option<NonZeroU64>,
+    on_set_value: EventHandler<NonZeroU64>,
+) -> Element {
+    let is_loading = page_num.is_none();
+    let page_num = page_num.unwrap_or(current_page.saturating_add(2));
+    let pages = build_page_elements(current_page, page_num);
+
+    let previous_disabled = current_page.get() == 1;
+    let next_disabled = current_page.get() == page_num.get();
+    let next_class = if is_loading {
+        "page-link placeholder"
+    } else if next_disabled {
+        "page-link disabled"
+    } else {
+        "page-link"
+    };
+
+    let page_buttons: Vec<Element> = pages
+        .into_iter()
+        .map(|page_elem| match page_elem {
+            PageElement::Page(page) => {
+                let is_placeholder = is_loading && page > current_page;
+                let is_active = current_page == page;
+                rsx! {
+                    li { class: if is_active { "page-item active" } else { "page-item" },
+                        button {
+                            onclick: move |_| {
+                                if !is_loading {
+                                    on_set_value.call(page);
+                                }
+                            },
+                            class: if is_placeholder { "page-link placeholder" } else { "page-link" },
+                            "{page.get()}"
+                        }
+                    }
+                }
+            }
+            PageElement::Ellipsis => rsx! {
+                li { class: "page-item disabled",
+                    button { class: "page-link", "…" }
+                }
+            },
+        })
+        .collect();
+
+    rsx! {
+        nav { "aria-label": "Page navigation",
+            ul { class: "pagination justify-content-center placeholder-glow",
+                li { class: "page-item",
+                    button {
+                        onclick: move |_| {
+                            on_set_value.call(
+                                NonZeroU64::new(current_page.get() - 1)
+                                    .unwrap_or(NonZeroU64::MIN),
+                            );
+                        },
+                        class: if previous_disabled { "page-link disabled" } else { "page-link" },
+                        "aria-label": "Previous",
+                        span { "aria-hidden": "true", "«" }
+                    }
+                }
+                {page_buttons.into_iter()}
+                li { class: "page-item",
+                    button {
+                        onclick: move |_| {
+                            if !is_loading {
+                                on_set_value.call(current_page.saturating_add(1));
+                            }
+                        },
+                        class: next_class,
+                        "aria-label": "Next",
+                        span { "aria-hidden": "true", "»" }
+                    }
+                }
+            }
+        }
+    }
 }
 
 enum PageElement {
     Page(NonZeroU64),
     Ellipsis,
-}
-
-#[function_component]
-pub fn Pagination(props: &Props) -> Html {
-    let Props {
-        current_page,
-        page_num,
-        on_set_value,
-    } = props;
-
-    let on_change = |page: NonZeroU64| {
-        let on_set_value = on_set_value.clone();
-
-        Callback::from(move |_: MouseEvent| {
-            on_set_value.emit(page);
-        })
-    };
-
-    let is_loading = page_num.is_none();
-
-    let page_num = page_num.unwrap_or(current_page.saturating_add(2));
-    let pages = build_page_elements(*current_page, page_num);
-
-    let previous_disabled = current_page.get() == 1;
-    let next_disabled = current_page.get() == page_num.get();
-
-    html! {
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center placeholder-glow">
-                <li class="page-item">
-                    <button onclick={ on_change(NonZeroU64::new(current_page.get() - 1).unwrap_or(NonZeroU64::MIN)) } class={ classes!("page-link", previous_disabled.then_some("disabled")) } aria-label="Previous">
-                        <span aria-hidden="true">{ "«" }</span>
-                    </button>
-                </li>
-                {
-                    for pages.into_iter().map(|page| match page {
-                        PageElement::Page(page) => {
-                            let is_placeholder = is_loading && page > *current_page;
-                            html! {
-                                <li class={ classes!("page-item", (*current_page == page).then_some("active")) }>
-                                    <button onclick={ (!is_loading).then(|| on_change(page)) } class={ classes!("page-link", is_placeholder.then_some("placeholder")) }>{ page.get() }</button>
-                                </li>
-                            }
-                        },
-                        PageElement::Ellipsis => html! {
-                            <li class="page-item disabled">
-                                <button class="page-link">{ "…" }</button>
-                            </li>
-                        },
-                    })
-                }
-                <li class="page-item">
-                    <button onclick={ (!is_loading).then(|| on_change(current_page.saturating_add(1))) } class={ classes!("page-link", next_disabled.then_some("disabled"), is_loading.then_some("placeholder")) } aria-label="Next">
-                        <span aria-hidden="true">{ "»" }</span>
-                    </button>
-                </li>
-            </ul>
-        </nav>
-    }
 }
 
 fn build_page_elements(current_page: NonZeroU64, num_pages: NonZeroU64) -> Vec<PageElement> {

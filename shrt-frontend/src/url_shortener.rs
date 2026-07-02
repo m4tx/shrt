@@ -1,9 +1,5 @@
-use std::rc::Rc;
-
-use implicit_clone::unsync::IString;
+use dioxus::prelude::*;
 use shrt_common::errors::ServiceError;
-use yew::prelude::*;
-use yew_router::hooks::use_navigator;
 
 use crate::api::ShrtApi;
 use crate::app::Route;
@@ -39,125 +35,97 @@ impl UrlShortenerState {
     }
 }
 
-#[function_component]
-pub fn UrlShortener() -> Html {
-    let url_shortener_state = use_state(UrlShortenerState::default);
-    let navigator = use_navigator().unwrap();
+#[component]
+pub fn UrlShortener() -> Element {
+    let mut url = use_signal(|| "http://".to_string());
+    let mut link_name = use_signal(String::new);
+    let mut state: Signal<UrlShortenerState> = use_signal(UrlShortenerState::default);
+    let navigator = use_navigator();
 
-    let url = use_state(|| IString::from("http://"));
-    let link_name = use_state(IString::default);
-
-    let on_url_entry: Callback<IString> = {
-        let url = url.clone();
-
-        Callback::from(move |value: IString| {
-            url.set(value.clone());
-        })
-    };
-
-    let on_link_name_entry: Callback<IString> = {
-        let link_name = link_name.clone();
-
-        Callback::from(move |value: IString| {
-            link_name.set(value);
-        })
-    };
-
-    let on_link_name_debounce: Callback<IString> = {
-        let link_name = link_name.clone();
-        let url_shortener_state = url_shortener_state.clone();
-
-        Callback::from(move |value: IString| {
-            let link_name = link_name.clone();
-            let url_shortener_state = url_shortener_state.clone();
-
-            if value.is_empty() {
-                url_shortener_state.set(UrlShortenerState::Initial);
-                return;
-            }
-
-            wasm_bindgen_futures::spawn_local(async move {
-                match ShrtApi::get_link_exists(&link_name).await {
-                    Ok(link_exists) => {
-                        url_shortener_state.set(if link_exists.exists {
-                            UrlShortenerState::LinkExists
-                        } else {
-                            UrlShortenerState::Initial
-                        });
-                    }
-                    Err(e) => {
-                        url_shortener_state.set(UrlShortenerState::Error(e));
-                    }
-                }
-            });
-        })
-    };
-
-    let on_submit = {
-        let url = url.clone();
-        let link_name = link_name.clone();
-        let url_shortener_state = url_shortener_state.clone();
-
-        Callback::from(move |evt: SubmitEvent| {
-            evt.prevent_default();
-
-            let navigator = navigator.clone();
-            let url_shortener_state = url_shortener_state.clone();
-            let url = url.clone();
-            let link_name = link_name.clone();
-
-            url_shortener_state.set(UrlShortenerState::Loading);
-
-            wasm_bindgen_futures::spawn_local(async move {
-                match ShrtApi::shorten_url(&url, &link_name).await {
-                    Ok(link) => {
-                        navigator.push(&Route::Link { slug: link.slug });
-                    }
-                    Err(e) => {
-                        url_shortener_state.set(UrlShortenerState::Error(e));
-                    }
-                }
-            });
-        })
-    };
-
-    let is_loading = (*url_shortener_state).is_loading();
-    let is_link_exists = (*url_shortener_state).is_link_exists();
+    let is_loading = state.read().is_loading();
+    let is_link_exists = state.read().is_link_exists();
+    let error = state.read().get_error().cloned();
     let link_name_error = if is_link_exists {
         "Link already taken; please choose another or leave the field empty"
     } else {
         ""
     };
-    html! {
-        <>
-            <form onsubmit={ on_submit }>
-                <div class="mb-3">
-                    <label for="url" class="form-label">{ "Target URL:" }</label>
-                    <Input on_set_value={ on_url_entry.clone() } value={ (*url).clone() } disabled={ is_loading } required={ true } id="url" input_type="url" />
-                </div>
-                <div class="mb-3">
-                    <label for="link-name" class="form-label">{ "Shortened Link:" }</label>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">{ "https://shrt.rs/" }</span>
-                        <Input on_set_value={ on_link_name_entry.clone() } on_debounce={ on_link_name_debounce.clone() } value={ (*link_name).clone() } disabled={ is_loading } placeholder="<random>" id="link-name" error={ link_name_error } />
-                    </div>
-                </div>
 
-                <p class="text-center">
-                    <button type="button" class="btn btn-outline-light" disabled={ is_loading } type="submit">
-                        { "Shorten URL" }
-                        if (*url_shortener_state).is_loading() {
-                            <div class="spinner-border spinner-border-sm ms-2" role="status">
-                                <span class="visually-hidden">{ "Loading..." }</span>
-                            </div>
+    rsx! {
+        form {
+            onsubmit: move |evt| {
+                evt.prevent_default();
+                let url_val = url.read().clone();
+                let link_name_val = link_name.read().clone();
+                state.set(UrlShortenerState::Loading);
+                spawn(async move {
+                    match ShrtApi::shorten_url(&url_val, &link_name_val).await {
+                        Ok(link) => {
+                            navigator.push(Route::LinkResult { slug: link.slug });
                         }
-                    </button>
-                </p>
-
-                if let Some(error) = (*url_shortener_state).get_error() {
-                    <ErrorAlert message={ "Could not shorten the URL" } error={Some(Rc::new(error.clone()))} />
+                        Err(e) => {
+                            state.set(UrlShortenerState::Error(e));
+                        }
+                    }
+                });
+            },
+            div { class: "mb-3",
+                label { r#for: "url", class: "form-label", "Target URL:" }
+                Input {
+                    on_set_value: move |v| url.set(v),
+                    value: url.read().clone(),
+                    disabled: is_loading,
+                    required: true,
+                    id: "url",
+                    input_type: "url",
                 }
-            </form>
-        </>
+            }
+            div { class: "mb-3",
+                label { r#for: "link-name", class: "form-label", "Shortened Link:" }
+                div { class: "input-group mb-3",
+                    span { class: "input-group-text", id: "basic-addon1", "https://snip.rs/" }
+                    Input {
+                        on_set_value: move |v| link_name.set(v),
+                        on_debounce: move |v: String| {
+                            if v.is_empty() {
+                                state.set(UrlShortenerState::Initial);
+                                return;
+                            }
+                            spawn(async move {
+                                match ShrtApi::get_link_exists(&v).await {
+                                    Ok(r) => state.set(if r.exists {
+                                        UrlShortenerState::LinkExists
+                                    } else {
+                                        UrlShortenerState::Initial
+                                    }),
+                                    Err(e) => state.set(UrlShortenerState::Error(e)),
+                                }
+                            });
+                        },
+                        value: link_name.read().clone(),
+                        disabled: is_loading,
+                        placeholder: "<random>",
+                        id: "link-name",
+                        error: link_name_error.to_string(),
+                    }
+                }
+            }
+            p { class: "text-center",
+                button {
+                    r#type: "submit",
+                    class: "btn btn-outline-light",
+                    disabled: is_loading,
+                    "Shorten URL"
+                    if is_loading {
+                        div { class: "spinner-border spinner-border-sm ms-2", role: "status",
+                            span { class: "visually-hidden", "Loading..." }
+                        }
+                    }
+                }
+            }
+            if let Some(e) = error {
+                ErrorAlert { message: "Could not shorten the URL", error: Some(e) }
+            }
+        }
     }
 }
