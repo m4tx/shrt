@@ -1,9 +1,9 @@
 use chrono::Utc;
-use cot::db::{query, Database, Model, StatementResult};
+use cot::StatusCode;
+use cot::db::{Database, Model, StatementResult, query};
 use cot::json::Json;
 use cot::request::extractors::{Path, UrlQuery};
 use cot::response::Redirect;
-use cot::StatusCode;
 use nanoid::nanoid;
 use shrt_common::errors::ServiceError;
 use shrt_common::links::{Link as ApiLink, LinkCreateRequest, LinkExists, LinksResponse};

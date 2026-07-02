@@ -93,7 +93,7 @@ pub fn ListLinks(props: &Props) -> Html {
             response.links.into_iter().map(|link| {
                 html! {
                     <tr>
-                        <td class="text-truncate" style="max-width: 8rem;"><a href={ format!("https://shrt.rs/{}", urlencoding::encode(&link.slug)) }>{ link.slug.clone() }</a></td>
+                        <td class="text-truncate" style="max-width: 8rem;"><a href={ format!("https://snip.rs/{}", urlencoding::encode(&link.slug)) }>{ link.slug.clone() }</a></td>
                         <td class="text-truncate" style="max-width: 20rem;"><a href={ link.url.clone() }>{ link.url }</a></td>
                         <td>{ link.visits }</td>
                         <td>{ format_date(link.created_at) }</td>

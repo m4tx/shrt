@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use cot::db::{model, Auto};
+use cot::db::{Auto, model};
 
 #[model]
 pub struct Link {

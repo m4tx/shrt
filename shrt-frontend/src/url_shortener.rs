@@ -138,7 +138,7 @@ pub fn UrlShortener() -> Html {
                 <div class="mb-3">
                     <label for="link-name" class="form-label">{ "Shortened Link:" }</label>
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">{ "https://shrt.rs/" }</span>
+                        <span class="input-group-text" id="basic-addon1">{ "https://snip.rs/" }</span>
                         <Input on_set_value={ on_link_name_entry.clone() } on_debounce={ on_link_name_debounce.clone() } value={ (*link_name).clone() } disabled={ is_loading } placeholder="<random>" id="link-name" error={ link_name_error } />
                     </div>
                 </div>

@@ -2,8 +2,8 @@ use std::rc::Rc;
 
 use serde::{Deserialize, Serialize};
 use shrt_common::errors::ServiceError;
-use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
+use wasm_bindgen::prelude::wasm_bindgen;
 use web_sys::HtmlElement;
 use yew::prelude::*;
 

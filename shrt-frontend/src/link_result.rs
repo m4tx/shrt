@@ -49,7 +49,7 @@ pub fn LinkResult(props: &Props) -> Html {
         });
     }
 
-    let shortened_url = format!("https://shrt.rs/{}", urlencoding::encode(slug));
+    let shortened_url = format!("https://snip.rs/{}", urlencoding::encode(slug));
     // TODO replace shrt.rs with an actual config-driven variable
     let target_url_element = match (*link_result_state).clone() {
         LinkResultState::Success { url, .. } => {
