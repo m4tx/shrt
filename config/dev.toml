@@ -1,0 +1,6 @@
+[database]
+url = "sqlite:db.sqlite?mode=rwc"
+
+[shrt]
+app_name = "shrt"
+base_url = "http://localhost:8000"

@@ -5,6 +5,7 @@ WORKDIR /usr/src/shrt/shrt-backend
 RUN cargo install --path . --locked
 
 FROM debian:13-slim
+WORKDIR /app
 COPY --from=builder /usr/local/cargo/bin/shrt-backend /usr/local/bin/shrt-backend
-ENV ROCKET_ADDRESS=0.0.0.0
-CMD ["shrt-backend"]
+COPY config/prod.toml /app/config/prod.toml
+CMD ["shrt-backend", "--listen", "0.0.0.0:8000", "--config", "prod"]

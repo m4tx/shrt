@@ -2,6 +2,7 @@ use std::num::NonZeroU64;
 
 use dioxus::prelude::*;
 use rand::seq::IndexedRandom;
+use shrt_common::config::AppConfig;
 use shrt_common::errors::ServiceError;
 use shrt_common::links::LinksResponse;
 
@@ -58,6 +59,7 @@ pub fn ListLinks(page: NonZeroU64) -> Element {
     };
 
     let error = state.read().get_error().cloned();
+    let config = use_context::<Signal<AppConfig>>();
 
     rsx! {
         if let Some(e) = error {
@@ -82,7 +84,8 @@ pub fn ListLinks(page: NonZeroU64) -> Element {
                                         td { class: "text-truncate", style: "max-width: 8rem;",
                                             a {
                                                 href: format!(
-                                                    "https://snip.rs/{}",
+                                                    "{}/{}",
+                                                    config.read().base_url,
                                                     urlencoding::encode(&link.slug),
                                                 ),
                                                 "{link.slug}"
