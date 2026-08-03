@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use shrt_common::config::AppConfig;
 use shrt_common::errors::ServiceError;
 
 use crate::api::ShrtApi;
@@ -41,6 +42,8 @@ pub fn UrlShortener() -> Element {
     let mut link_name = use_signal(String::new);
     let mut state: Signal<UrlShortenerState> = use_signal(UrlShortenerState::default);
     let navigator = use_navigator();
+    let config = use_context::<Signal<AppConfig>>();
+    let base_url = config.read().base_url.clone();
 
     let is_loading = state.read().is_loading();
     let is_link_exists = state.read().is_link_exists();
@@ -83,7 +86,7 @@ pub fn UrlShortener() -> Element {
             div { class: "mb-3",
                 label { r#for: "link-name", class: "form-label", "Shortened Link:" }
                 div { class: "input-group mb-3",
-                    span { class: "input-group-text", id: "basic-addon1", "https://snip.rs/" }
+                    span { class: "input-group-text", id: "basic-addon1", "{base_url}/" }
                     Input {
                         on_set_value: move |v| link_name.set(v),
                         on_debounce: move |v: String| {

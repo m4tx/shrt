@@ -1,7 +1,6 @@
 use cot::admin::AdminApp;
 use cot::auth::db::DatabaseUserApp;
 use cot::cli::CliMetadata;
-use cot::config::ProjectConfig;
 use cot::db::migrations::SyncDynMigration;
 use cot::middleware::{AuthMiddleware, SessionMiddleware};
 use cot::openapi::swagger_ui::SwaggerUi;
@@ -31,6 +30,7 @@ impl App for LinkApp {
         use cot::router::method::openapi::ApiMethodRouter;
 
         Router::with_urls([
+            Route::with_api_handler("/config", ApiMethodRouter::new().get(get_config)),
             Route::with_api_handler(
                 "/links/{slug}/exists",
                 ApiMethodRouter::new().get(link_exists),
@@ -58,20 +58,6 @@ pub struct ShrtProject;
 impl Project for ShrtProject {
     fn cli_metadata(&self) -> CliMetadata {
         cot::cli::metadata!()
-    }
-
-    fn config(&self, config_name: &str) -> cot::Result<ProjectConfig> {
-        if config_name == "test" {
-            Ok(ProjectConfig::builder()
-                .database(
-                    cot::config::DatabaseConfig::builder()
-                        .url("sqlite::memory:")
-                        .build(),
-                )
-                .build())
-        } else {
-            Ok(ProjectConfig::dev_default())
-        }
     }
 
     fn middlewares(&self, handler: RootHandlerBuilder, context: &MiddlewareContext) -> RootHandler {

@@ -2,6 +2,7 @@ use std::num::NonZeroU64;
 
 use gloo_net::http::{Request, Response};
 use serde::de::DeserializeOwned;
+use shrt_common::config::AppConfig;
 use shrt_common::errors::ServiceError;
 use shrt_common::links::{Link, LinkCreateRequest, LinkExists, LinksResponse};
 
@@ -14,6 +15,14 @@ fn api_url() -> &'static str {
 pub struct ShrtApi;
 
 impl ShrtApi {
+    pub async fn get_config() -> Result<AppConfig, ServiceError> {
+        let result = Request::get(&format!("{}/config", api_url()))
+            .send()
+            .await?;
+
+        Self::map_response(result).await
+    }
+
     pub async fn get_link(slug: &str) -> Result<Link, ServiceError> {
         let result = Request::get(&format!(
             "{}/links/{}",
