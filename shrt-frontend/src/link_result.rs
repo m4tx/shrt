@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use shrt_common::config::AppConfig;
 use shrt_common::errors::ServiceError;
 
 use crate::api::ShrtApi;
@@ -34,7 +35,9 @@ pub fn LinkResult(slug: String) -> Element {
         });
     });
 
-    let shortened_url = format!("https://snip.rs/{}", urlencoding::encode(&slug));
+    let config = use_context::<Signal<AppConfig>>();
+    let base_url = config.read().base_url.clone();
+    let shortened_url = format!("{}/{}", base_url, urlencoding::encode(&slug));
 
     rsx! {
         div { class: "mb-3",
