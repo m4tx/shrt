@@ -1,6 +1,6 @@
 FROM rust:1.96 as builder
 RUN rustup target add wasm32-unknown-unknown && \
-     cargo install trunk
+     cargo install trunk --locked
 WORKDIR /usr/src/shrt
 COPY . .
 WORKDIR /usr/src/shrt/shrt-frontend
