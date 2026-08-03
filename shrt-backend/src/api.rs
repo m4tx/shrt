@@ -5,10 +5,15 @@ use cot::json::Json;
 use cot::request::extractors::{Path, UrlQuery};
 use cot::response::Redirect;
 use nanoid::nanoid;
+use shrt_common::config::AppConfig;
 use shrt_common::errors::ServiceError;
 use shrt_common::links::{Link as ApiLink, LinkCreateRequest, LinkExists, LinksResponse};
 
 use crate::models::Link;
+
+pub async fn get_config(config: AppConfig) -> Json<AppConfig> {
+    Json(config)
+}
 
 const DEFAULT_LINKS_PER_PAGE: u64 = 30;
 const DEFAULT_SLUG_LENGTH: usize = 7;
