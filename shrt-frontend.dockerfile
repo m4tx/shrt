@@ -1,4 +1,4 @@
-FROM rust:1.98 as builder
+FROM rust:1.99 as builder
 RUN rustup target add wasm32-unknown-unknown && \
      cargo install trunk --locked
 WORKDIR /usr/src/shrt

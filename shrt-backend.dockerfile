@@ -1,4 +1,4 @@
-FROM rust:1.98 as builder
+FROM rust:1.99 as builder
 WORKDIR /usr/src/shrt
 COPY . .
 WORKDIR /usr/src/shrt/shrt-backend
